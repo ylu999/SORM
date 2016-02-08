@@ -1,0 +1,1 @@
+1. We support one and only one primary key for each table.
