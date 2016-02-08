@@ -16,7 +16,8 @@ public interface Query {
 	 */
 	public int executeDML(String sql,Object[] params);
 	/**
-	 * Store an object to database
+	 * Store an object to database if the object is not null
+	 * If any number type field is null, put 0 in database 
 	 * @param object
 	 */
 	public void insert(Object object);
