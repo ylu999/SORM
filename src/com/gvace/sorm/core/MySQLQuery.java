@@ -17,14 +17,16 @@ public class MySQLQuery implements Query {
 	@Test
 	public void test(){
 		Employee emp = new Employee();
-		emp.setName("aaa");
-		emp.setBirthday(new java.sql.Date(System.currentTimeMillis()));
+		emp.setId(1);
+		emp.setName("aaabbbbb");
+		emp.setBirthday(new java.sql.Date(System.currentTimeMillis()+1000000000));
 		//emp.setDepartmentId(0);
-		insert(emp);
+		update(emp,new String[]{"birthday"});
 	}
 	*/
 	@Override
 	public int executeDML(String sql, Object[] params) {
+		//System.out.println(sql);
 		int count = 0;
 		try(
 			Connection conn = DBManager.getConn();
@@ -94,12 +96,51 @@ public class MySQLQuery implements Query {
 
 	@Override
 	public int update(Object object, String[] fieldNames) {
-		return 0;
+		if(object==null)return 0;
+		Class clazz = object.getClass();
+		TableInfo tableInfo = TableContext.poClassTableMap.get(object.getClass());
+		Field[] fields = clazz.getDeclaredFields();
+		StringBuilder sqlBuilder = new StringBuilder("UPDATE "+tableInfo.getTname()+" SET ");
+		List<Object> paramsList = new ArrayList<Object>();
+		int paramCount=0;
+		for(String fieldName:fieldNames){
+			if(tableInfo.getOnlyPriKey().getName().equals(fieldName)){
+				continue;
+			}
+			Object fieldValue = ReflectUtils.invokeGet(object, fieldName);
+			if(paramCount>0)sqlBuilder.append(",");
+			sqlBuilder.append(fieldName+"=?");
+			paramsList.add(fieldValue);
+			paramCount++;
+		}
+		sqlBuilder.append(" WHERE "+tableInfo.getOnlyPriKey().getName()+"=?;");
+		paramsList.add(ReflectUtils.invokeGet(object, tableInfo.getOnlyPriKey().getName()));
+		return executeDML(sqlBuilder.toString(), paramsList.toArray());
 	}
 
 	@Override
 	public int update(Object object) {
-		return 0;
+		if(object==null)return 0;
+		Class clazz = object.getClass();
+		TableInfo tableInfo = TableContext.poClassTableMap.get(object.getClass());
+		Field[] fields = clazz.getDeclaredFields();
+		StringBuilder sqlBuilder = new StringBuilder("UPDATE "+tableInfo.getTname()+" SET ");
+		List<Object> paramsList = new ArrayList<Object>();
+		int paramCount=0;
+		for(Field field:fields){
+			String fieldName = field.getName();
+			if(tableInfo.getOnlyPriKey().getName().equals(fieldName)){
+				continue;
+			}
+			Object fieldValue = ReflectUtils.invokeGet(object, fieldName);
+			if(paramCount>0)sqlBuilder.append(",");
+			sqlBuilder.append(fieldName+"=?");
+			paramsList.add(fieldValue);
+			paramCount++;
+		}
+		sqlBuilder.append(" WHERE "+tableInfo.getOnlyPriKey().getName()+"=?;");
+		paramsList.add(ReflectUtils.invokeGet(object, tableInfo.getOnlyPriKey().getName()));
+		return executeDML(sqlBuilder.toString(), paramsList.toArray());
 	}
 
 	@Override
