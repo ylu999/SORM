@@ -3,6 +3,8 @@ package com.gvace.sorm.core;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,26 +15,30 @@ import com.gvace.sorm.utils.JDBCUtils;
 import com.gvace.sorm.utils.ReflectUtils;
 
 public class MySQLQuery implements Query {
-	/*
-	@Test
+	/*@Test
 	public void test(){
+		List<Employee> list = new MySQLQuery().queryRows("SELECT  `id`,  `name`,  `salary`,  `birthday`, `age`, `departmentId` FROM `employee`" +
+				"WHERE age>? and salary<?", Employee.class, new Integer[]{20,5000});
+		for(Employee emp: list){
+			System.out.println(emp.getName());
+		}
+		
 		Employee emp = new Employee();
 		emp.setId(1);
 		emp.setName("aaabbbbb");
 		emp.setBirthday(new java.sql.Date(System.currentTimeMillis()+1000000000));
 		//emp.setDepartmentId(0);
 		update(emp,new String[]{"birthday"});
-	}
-	*/
+	}*/
+	
 	@Override
 	public int executeDML(String sql, Object[] params) {
 		//System.out.println(sql);
 		int count = 0;
 		try(
 			Connection conn = DBManager.getConn();
-			PreparedStatement ps = conn.prepareStatement(sql);
+			PreparedStatement ps = JDBCUtils.createPreparedStatement(conn, sql, params);
 		){
-			JDBCUtils.handleParams(ps, params);
 			count = ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -145,7 +151,35 @@ public class MySQLQuery implements Query {
 
 	@Override
 	public List queryRows(String sql, Class clazz, Object[] params) {
-		return null;
+		List result = null;
+		try(
+			Connection conn = DBManager.getConn();
+			PreparedStatement ps = JDBCUtils.createPreparedStatement(conn,sql,params);
+			ResultSet rs = ps.executeQuery();
+		){
+			ResultSetMetaData metaData = rs.getMetaData();
+			
+			while(rs.next()){
+				if(result==null){
+					result = new ArrayList();
+				}
+				Object rowObj = clazz.newInstance(); //call javabean constructor
+				//for each column
+				for(int i=0;i<metaData.getColumnCount();i++){
+					String columnName = metaData.getColumnLabel(i+1);
+					Object columnValue = rs.getObject(i+1);
+					ReflectUtils.invokeSet(rowObj, columnName, columnValue);
+				}
+				result.add(rowObj);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Override
@@ -162,5 +196,4 @@ public class MySQLQuery implements Query {
 	public Number queryNumber(String sql, Class clazz, Object[] params) {
 		return null;
 	}
-
 }

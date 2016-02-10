@@ -1,6 +1,8 @@
 package com.gvace.sorm.utils;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -19,5 +21,10 @@ public class JDBCUtils {
 				e.printStackTrace();
 			}
 		}
+	}
+	public static PreparedStatement createPreparedStatement(Connection conn,String sql,Object[] params) throws SQLException{
+		PreparedStatement ps = conn.prepareStatement(sql);
+		JDBCUtils.handleParams(ps, params);
+		return ps;
 	}
 }
