@@ -34,6 +34,7 @@ public class ReflectUtils {
 	}
 
 	public static void invokeSet(Object obj, String columnName, Object columnValue){
+		if(columnValue==null)return;
 		Method setMethod;
 		try {
 			setMethod = obj.getClass().getDeclaredMethod("set"+StringUtils.firstCharUpperCase(columnName),columnValue.getClass());
