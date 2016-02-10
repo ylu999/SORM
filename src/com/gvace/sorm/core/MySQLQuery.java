@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.rowset.CachedRowSet;
+import com.sun.rowset.CachedRowSetImpl;
+
 import org.junit.Test;
 
 import com.gvace.model.Employee;
@@ -140,18 +143,43 @@ public class MySQLQuery implements Query {
 	}
 
 	@Override
+	public CachedRowSet queryRows(String sql, Object[] params) {
+		try(
+				Connection conn = DBManager.getConn();
+				PreparedStatement ps = JDBCUtils.createPreparedStatement(conn,sql,params);
+				ResultSet rs = ps.executeQuery();
+			){
+			CachedRowSet crs = new CachedRowSetImpl();
+			crs.populate(rs);
+			return crs;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public CachedRowSet queryUniqueRow(String sql, Object[] params) {
+		CachedRowSet crs = queryRows(sql,params);
+		try {
+			return (crs!=null&&crs.next())?crs:null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	@Override
 	public List queryRows(String sql, Class clazz, Object[] params) {
-		List result = null;
+		List list = null;
 		try(
 			Connection conn = DBManager.getConn();
 			PreparedStatement ps = JDBCUtils.createPreparedStatement(conn,sql,params);
 			ResultSet rs = ps.executeQuery();
 		){
 			ResultSetMetaData metaData = rs.getMetaData();
-			
 			while(rs.next()){
-				if(result==null){
-					result = new ArrayList();
+				if(list==null){
+					list = new ArrayList();
 				}
 				Object rowObj = clazz.newInstance(); //call javabean constructor
 				//for each column
@@ -160,7 +188,7 @@ public class MySQLQuery implements Query {
 					Object columnValue = rs.getObject(i+1);
 					ReflectUtils.invokeSet(rowObj, columnName, columnValue);
 				}
-				result.add(rowObj);
+				list.add(rowObj);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -169,21 +197,34 @@ public class MySQLQuery implements Query {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return list;
 	}
 
 	@Override
-	public List queryUniqueRow(String sql, Class clazz, Object[] params) {
-		return null;
+	public Object queryUniqueRow(String sql, Class clazz, Object[] params) {
+		List list = queryRows(sql,clazz,params);
+		return (list!=null&&list.size()>0)?list.get(0):null;
 	}
 
 	@Override
-	public Object queryValue(String sql, Class clazz, Object[] params) {
-		return null;
+	public Object queryValue(String sql, Object[] params) {
+		Object value = null;
+		try(
+			Connection conn = DBManager.getConn();
+			PreparedStatement ps = JDBCUtils.createPreparedStatement(conn,sql,params);
+			ResultSet rs = ps.executeQuery();
+		){
+			if(rs.next()) value = rs.getObject(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return value;
 	}
 
 	@Override
-	public Number queryNumber(String sql, Class clazz, Object[] params) {
-		return null;
+	public Number queryNumber(String sql, Object[] params) {
+		return (Number)queryValue(sql,params);
 	}
+
+	
 }

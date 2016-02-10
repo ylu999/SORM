@@ -1,6 +1,9 @@
 package com.gvace.sorm.core;
 
+import java.sql.ResultSet;
 import java.util.List;
+
+import javax.sql.rowset.CachedRowSet;
 
 /*
  * For selection, core public function
@@ -46,6 +49,26 @@ public interface Query {
 	 */
 	public int update(Object object);
 	/**
+	 * Select and return CachedRowSet
+	 * @param sql selection sql statement
+	 * @param params sql parameters
+	 * @return results CachedRowSet
+	 */
+	public CachedRowSet queryRows(String sql,Object[] params);
+	/**
+	 * Select and return one CachedRowSet
+	 * @param sql selection sql statement
+	 * @param params sql parameters
+	 * @return return one CachedRowSet
+	 */
+	public CachedRowSet queryUniqueRow(String sql,Object[] params);
+	/**
+	 * Select and return one value(one field value in one row) as result
+	 * @param sql selection sql statement
+	 * @param params sql parameters
+	 * @return return one object as result
+	 */
+	/**
 	 * Select and return multiple results as a list of objects
 	 * @param sql selection sql statement
 	 * @param clazz target javabean Class object
@@ -60,21 +83,19 @@ public interface Query {
 	 * @param params sql parameters
 	 * @return return one object as result
 	 */
-	public List queryUniqueRow(String sql, Class clazz,Object[] params);
+	public Object queryUniqueRow(String sql, Class clazz,Object[] params);
 	/**
 	 * Select and return one value(one field value in one row) as result
 	 * @param sql selection sql statement
-	 * @param clazz target javabean Class object
 	 * @param params sql parameters
 	 * @return return one object as result
 	 */
-	public Object queryValue(String sql, Class clazz,Object[] params);
+	public Object queryValue(String sql, Object[] params);
 	/**
 	 * Select and return one number(one field value in one row) as result
 	 * @param sql selection sql statement
-	 * @param clazz target javabean Class object
 	 * @param params sql parameters
 	 * @return return one number as result
 	 */
-	public Number queryNumber(String sql, Class clazz,Object[] params);
+	public Number queryNumber(String sql,Object[] params);
 }

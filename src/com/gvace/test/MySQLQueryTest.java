@@ -1,6 +1,10 @@
 package com.gvace.test;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+
+import javax.sql.rowset.CachedRowSet;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,6 +19,25 @@ public class MySQLQueryTest {
 	@Before
 	public void before(){
 		mySQLQuery = new MySQLQuery();
+	}
+	@Test
+	public void testQueryValue(){
+		Object obj = new MySQLQuery().queryValue("SELECT count(*) FROM `employee` where salary>?", new Object[]{1000});
+		System.out.println(obj);
+		Number num = new MySQLQuery().queryNumber("SELECT count(*) FROM `employee` where salary>?", new Object[]{1000});
+		System.out.println(num.intValue());
+	}
+	@Test
+	public void testQueryRows(){
+		CachedRowSet rs = new MySQLQuery().queryRows("SELECT  `id`,  `name`,  `salary`,  `birthday`, `age`, `departmentId` FROM `employee`" +
+				"WHERE age>? and salary<?", new Integer[]{20,5000});
+		try {
+			while(rs.next()){
+				System.out.println(rs.getString("name"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	@Test
 	public void testQuery(){
