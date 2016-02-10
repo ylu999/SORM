@@ -9,28 +9,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
+
+import com.gvace.model.Employee;
 import com.gvace.sorm.bean.ColumnInfo;
 import com.gvace.sorm.bean.TableInfo;
 import com.gvace.sorm.utils.JDBCUtils;
 import com.gvace.sorm.utils.ReflectUtils;
+import com.gvace.vo.EmpVO;
 
 public class MySQLQuery implements Query {
-	/*@Test
-	public void test(){
-		List<Employee> list = new MySQLQuery().queryRows("SELECT  `id`,  `name`,  `salary`,  `birthday`, `age`, `departmentId` FROM `employee`" +
-				"WHERE age>? and salary<?", Employee.class, new Integer[]{20,5000});
-		for(Employee emp: list){
-			System.out.println(emp.getName());
-		}
-		
-		Employee emp = new Employee();
-		emp.setId(1);
-		emp.setName("aaabbbbb");
-		emp.setBirthday(new java.sql.Date(System.currentTimeMillis()+1000000000));
-		//emp.setDepartmentId(0);
-		update(emp,new String[]{"birthday"});
-	}*/
-	
 	@Override
 	public int executeDML(String sql, Object[] params) {
 		//System.out.println(sql);
@@ -104,7 +92,9 @@ public class MySQLQuery implements Query {
 	public int update(Object object, String[] fieldNames) {
 		if(object==null)return 0;
 		Class clazz = object.getClass();
+		System.out.println("TableInfo");
 		TableInfo tableInfo = TableContext.poClassTableMap.get(object.getClass());
+		System.out.println("TableInfo");
 		Field[] fields = clazz.getDeclaredFields();
 		StringBuilder sqlBuilder = new StringBuilder("UPDATE "+tableInfo.getTname()+" SET ");
 		List<Object> paramsList = new ArrayList<Object>();
