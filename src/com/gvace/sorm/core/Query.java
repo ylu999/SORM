@@ -24,8 +24,8 @@ import com.sun.rowset.CachedRowSetImpl;
 @SuppressWarnings("all")
 public abstract class Query implements Cloneable{
 	public Object executeQueryTemplate(final String sql,final Class clazz,final Object[] params,final CallBack callBack){
+		Connection conn = DBManager.getConn();
 		try(
-			Connection conn = DBManager.getConn();
 			PreparedStatement ps = JDBCUtils.createPreparedStatement(conn,sql,params);
 			ResultSet rs = ps.executeQuery();
 		){
@@ -33,6 +33,8 @@ public abstract class Query implements Cloneable{
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		}finally{
+			DBManager.close(conn);
 		}
 	}
 	/**
@@ -42,14 +44,17 @@ public abstract class Query implements Cloneable{
 	 * @return number of rows affected
 	 */
 	public int executeDML(String sql,Object[] params) {
+		Connection conn = DBManager.getConn();
 		int count = 0;
 		try(
-			Connection conn = DBManager.getConn();
 			PreparedStatement ps = JDBCUtils.createPreparedStatement(conn, sql, params);
 		){
 			count = ps.executeUpdate();
+			return count;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally{
+			DBManager.close(conn);
 		}
 		return count;
 	}
@@ -178,8 +183,8 @@ public abstract class Query implements Cloneable{
 	 * @return results CachedRowSet
 	 */
 	public CachedRowSet queryRows(String sql,Object[] params) {
+		Connection conn = DBManager.getConn();
 		try(
-				Connection conn = DBManager.getConn();
 				PreparedStatement ps = JDBCUtils.createPreparedStatement(conn,sql,params);
 				ResultSet rs = ps.executeQuery();
 			){
@@ -188,7 +193,10 @@ public abstract class Query implements Cloneable{
 			return crs;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally{
+			DBManager.close(conn);
 		}
+		
 		return null;
 	}
 	/**
