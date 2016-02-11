@@ -12,13 +12,16 @@ import org.junit.Test;
 
 import com.gvace.model.Employee;
 import com.gvace.sorm.core.MySQLQuery;
+import com.gvace.sorm.core.Query;
+import com.gvace.sorm.core.QueryFactory;
 import com.gvace.vo.EmpVO;
 
 public class MySQLQueryTest {
-	MySQLQuery mySQLQuery = null;
+	Query mySQLQuery = null;
 	@Before
 	public void before(){
-		mySQLQuery = new MySQLQuery();
+		//mySQLQuery = new MySQLQuery();
+		mySQLQuery = QueryFactory.createQuery();
 	}
 	@Test
 	public void testQueryValue(){

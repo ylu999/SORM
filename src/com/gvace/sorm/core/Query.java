@@ -22,7 +22,7 @@ import com.sun.rowset.CachedRowSetImpl;
  * @author Yushan Lu gvace.blogspot.com
  */
 @SuppressWarnings("all")
-public abstract class Query {
+public abstract class Query implements Cloneable{
 	public Object executeQueryTemplate(final String sql,final Class clazz,final Object[] params,final CallBack callBack){
 		try(
 			Connection conn = DBManager.getConn();
@@ -310,4 +310,8 @@ public abstract class Query {
 	 * @return
 	 */
 	public abstract CachedRowSet queryPagenate(String sql,Object[] params,int pageNum,int size);
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
 }
