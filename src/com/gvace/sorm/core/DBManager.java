@@ -31,7 +31,9 @@ public class DBManager {
 		  String currentDB = pp.getProperty("currentDB");
 		  String srcPath = pp.getProperty("srcPath");
 		  String poPackage = pp.getProperty("poPackage");
-		  conf = new Configuration(driver, url, user, pwd, currentDB, srcPath, poPackage);
+		  String queryClass = pp.getProperty("queryClass");
+		  
+		  conf = new Configuration(driver, url, user, pwd, currentDB, srcPath, poPackage, queryClass);
 	}
 	public static void close(ResultSet rs,Statement ps,Connection conn){
 		try{

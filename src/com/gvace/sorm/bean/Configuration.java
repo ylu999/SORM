@@ -33,6 +33,10 @@ public class Configuration {
 	 * the package of all generated models, po=Persistence Object
 	 */
 	private String poPackage;
+	/**
+	 * using specify the implemented query class
+	 */
+	private String queryClass;
 	public String getDriver() {
 		return driver;
 	}
@@ -75,8 +79,15 @@ public class Configuration {
 	public void setPoPackage(String poPackage) {
 		this.poPackage = poPackage;
 	}
+	
+	public String getQueryClass() {
+		return queryClass;
+	}
+	public void setQueryClass(String queryClass) {
+		this.queryClass = queryClass;
+	}
 	public Configuration(String driver, String url, String user, String pwd,
-			String currentDB, String srcPath, String poPackage) {
+			String currentDB, String srcPath, String poPackage, String queryClass) {
 		super();
 		this.driver = driver;
 		this.url = url;
@@ -85,6 +96,7 @@ public class Configuration {
 		this.currentDB = currentDB;
 		this.srcPath = srcPath;
 		this.poPackage = poPackage;
+		this.queryClass = queryClass;
 	}
 	public Configuration() {
 	}
