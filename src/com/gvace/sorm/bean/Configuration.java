@@ -37,6 +37,14 @@ public class Configuration {
 	 * using specify the implemented query class
 	 */
 	private String queryClass;
+	/**
+	 * Min DB pool Connection Number
+	 */
+	private int poolMinSize;
+	/**
+	 * Max DB pool Connection Number
+	 */
+	private int poolMaxSize;
 	public String getDriver() {
 		return driver;
 	}
@@ -86,8 +94,20 @@ public class Configuration {
 	public void setQueryClass(String queryClass) {
 		this.queryClass = queryClass;
 	}
+	public int getPoolMinSize() {
+		return poolMinSize;
+	}
+	public void setPoolMinSize(int poolMinSize) {
+		this.poolMinSize = poolMinSize;
+	}
+	public int getPoolMaxSize() {
+		return poolMaxSize;
+	}
+	public void setPoolMaxSize(int poolMaxSize) {
+		this.poolMaxSize = poolMaxSize;
+	}
 	public Configuration(String driver, String url, String user, String pwd,
-			String currentDB, String srcPath, String poPackage, String queryClass) {
+			String currentDB, String srcPath, String poPackage, String queryClass, int poolMinSize, int poolMaxSize) {
 		super();
 		this.driver = driver;
 		this.url = url;
@@ -97,6 +117,8 @@ public class Configuration {
 		this.srcPath = srcPath;
 		this.poPackage = poPackage;
 		this.queryClass = queryClass;
+		this.poolMinSize = poolMinSize;
+		this.poolMaxSize = poolMaxSize;
 	}
 	public Configuration() {
 	}
