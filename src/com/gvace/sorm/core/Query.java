@@ -264,17 +264,18 @@ public abstract class Query {
 	 * @return return one object as result
 	 */
 	public Object queryValue(String sql, Object[] params) {
-		Object value = null;
-		try(
-			Connection conn = DBManager.getConn();
-			PreparedStatement ps = JDBCUtils.createPreparedStatement(conn,sql,params);
-			ResultSet rs = ps.executeQuery();
-		){
-			if(rs.next()) value = rs.getObject(1);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return value;
+		return executeQueryTemplate(sql, null, params, new CallBack(){
+			@Override
+			public Object execute(Connection conn, PreparedStatement ps, ResultSet rs) {
+				try {
+					if(rs.next()) return rs.getObject(1);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+			
+		});
 	}
 	/**
 	 * Select and return one number(one field value in one row) as result
