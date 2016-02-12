@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
 import com.gvace.sorm.bean.ColumnInfo;
 import com.gvace.sorm.bean.JavaFieldGetSetSrcGenerator;
 import com.gvace.sorm.bean.TableInfo;
@@ -105,12 +103,5 @@ public class JavaFileUtils {
 
 		JavaFieldGetSetSrcGenerator srcGenerator = new JavaFieldGetSetSrcGenerator(fieldSrcCode, getterSrcCodeBuilder.toString(), setterSrcCodeBuilder.toString());
 		return srcGenerator;
-	}
-	@Test
-	public void test(){
-		Map<String, TableInfo> map = TableContext.tables;
-		for(TableInfo tableInfo: map.values()){
-			createJavaPOFile(tableInfo,new MySQLTypeConvertor());
-		}
 	}
 }

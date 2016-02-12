@@ -127,9 +127,7 @@ public abstract class Query implements Cloneable{
 	public int update(Object object,String[] fieldNames) {
 		if(object==null)return 0;
 		Class clazz = object.getClass();
-		System.out.println("TableInfo");
 		TableInfo tableInfo = TableContext.poClassTableMap.get(object.getClass());
-		System.out.println("TableInfo");
 		Field[] fields = clazz.getDeclaredFields();
 		StringBuilder sqlBuilder = new StringBuilder("UPDATE "+tableInfo.getTname()+" SET ");
 		List<Object> paramsList = new ArrayList<Object>();
