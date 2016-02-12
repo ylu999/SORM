@@ -264,6 +264,19 @@ public abstract class Query implements Cloneable{
 		return (list!=null&&list.size()>0)?list.get(0):null;
 	}
 	/**
+	 * Query Result by primary id
+	 * @param clazz target javabean Class object
+	 * @param id target object primary id value
+	 * @return one object as result
+	 */
+	public Object queryById(Class clazz,Object id){
+		TableInfo tableInfo = TableContext.poClassTableMap.get(clazz);
+		ColumnInfo onlyPriKey = tableInfo.getOnlyPriKey();
+		String sql = "SELECT * FROM "+tableInfo.getTname()+" WHERE "+onlyPriKey.getName()+"=?;";
+		Object[] params = new Object[]{id};
+		return queryUniqueRow(sql,clazz, params);
+	}
+	/**
 	 * Select and return one value(one field value in one row) as result
 	 * @param sql selection sql statement
 	 * @param params sql parameters
