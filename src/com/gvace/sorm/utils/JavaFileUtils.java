@@ -32,7 +32,7 @@ public class JavaFileUtils {
 		String packPath = DBManager.getConfiguration().getSrcPath()+File.separator+packageToPath(DBManager.getConfiguration().getPoPackage());
 		String fileName = StringUtils.firstCharUpperCase(tableInfo.getTname())+".java";
 		File dir = new File(packPath);
-		if (!dir.exists()) dir.mkdir();
+		if (!dir.exists()) dir.mkdirs();
 		File file = new File(packPath+File.separator+fileName);
 		
 		try(BufferedWriter bw = new BufferedWriter(new FileWriter(file))){
