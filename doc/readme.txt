@@ -1,2 +1,4 @@
-1. We support one and only one primary key for each table.
-2. Try your best to use boxing objects instead of primitive types.
+1. **IMPORTANT: TableContext.updatePOFiles() will be manually called by developer themselves. 
+2. Function loadPOTables will be called by DBManager in static block.
+3. We support one and only one primary key for each table.
+4. Try your best to use boxing objects instead of primitive types.
