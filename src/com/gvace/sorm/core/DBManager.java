@@ -47,7 +47,7 @@ public class DBManager {
 		  int poolMaxSize = Integer.parseInt(pp.getProperty("poolMaxSize"));
 		  
 		  conf = new Configuration(driver, url, user, pwd, currentDB, srcPath, poPackage, queryClass, poolMinSize, poolMaxSize);
-		  TableContext.class.getName();
+		  TableContext.loadPOTables();
 	}
 	/**
 	 * get Configuration object

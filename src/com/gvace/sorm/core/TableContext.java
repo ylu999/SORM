@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-
 import com.gvace.sorm.bean.ColumnInfo;
 import com.gvace.sorm.bean.TableInfo;
 import com.gvace.sorm.utils.JavaFileUtils;
@@ -72,16 +70,12 @@ public class TableContext {
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
-		//Update java PO files
-		updatePOFiles();
-		//load class for updated java PO files
-		loadPOTables();
 	}
 	public static Map<String,TableInfo> getTableInfos(){
 		return tables;
 	}
 	/**
-	 * Load generated Class
+	 * Load all generated Class
 	 */
 	public static void loadPOTables(){
 		try {
@@ -93,15 +87,13 @@ public class TableContext {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Generate all PO java files to src
+	 */
 	public static void updatePOFiles(){
 		for(TableInfo tableInfo: tables.values()){
 			JavaFileUtils.createJavaPOFile(tableInfo,new MySQLTypeConvertor());
 		}
-	}
-	@Test
-	public void test(){
-		
 	}
 }
 
